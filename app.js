@@ -6,7 +6,7 @@
 
   /* Куда уходят заявки. FormSubmit пересылает письмо на почту агентства,
      бэкенд не нужен — работает и на GitHub Pages. */
-  var OWNER_EMAIL = 'vlad1952@yandex.ru';
+  var OWNER_EMAIL = 'vladimir19527352@gmail.com';
   var ENDPOINT = 'https://formsubmit.co/ajax/' + OWNER_EMAIL;
   var SUBJECT = 'Заявка на экскурсию по Светлогорску';
 
