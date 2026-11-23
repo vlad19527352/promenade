@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Променад — экскурсии по Светлогорску</title>
+<meta name="description" content="Четыре экскурсии по Светлогорску: каждый день в 10:00, два часа, 350 ₽ с человека, группа до 10 человек. Сбор на ул. Ленина, 11.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#tours">Перейти к расписанию</a>
+
+<header class="header">
+  <div class="wrap header__inner">
+    <a class="logo" href="#top">
+      <span class="logo__name">Променад</span>
+      <span class="logo__sub">экскурсии по Светлогорску</span>
+    </a>
+    <nav class="nav" aria-label="Разделы страницы">
+      <a href="#tours">Расписание</a>
+      <a href="#about">Как проходит</a>
+      <a href="#details">Детали</a>
+    </nav>
+    <a class="btn btn--ghost header__cta" href="#tours">Выбрать экскурсию</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero__media" aria-hidden="true">
+      <img src="Photo/GHexRd4lVZBpGYV8nXGOG2G8LKGH8y0xRu3uoDsR3oLClgBgsqsDu-h3ARfJqnIUoax3QzKcKbhg0rtqu1YzNXyM.jpg" alt="">
+    </div>
+    <div class="wrap hero__inner">
+      <p class="eyebrow">Светлогорск · Калининградская область</p>
+      <h1>Светлогорск<br>за два часа</h1>
+      <p class="hero__lead">Четыре прогулки с гидом: море, тихое озеро, старые улицы и лесная тропа к обрыву. Небольшая группа, спокойный темп, живые истории вместо списка дат.</p>
+      <ul class="facts">
+        <li>4 маршрута</li>
+        <li>каждый день</li>
+        <li>10:00</li>
+        <li>2 часа</li>
+        <li>350 ₽ с человека</li>
+        <li>до 10 человек</li>
+      </ul>
+      <a class="btn btn--primary" href="#tours">Выбрать экскурсию</a>
+    </div>
+  </section>
+
+  <section class="section about" id="about">
+    <div class="wrap about__grid">
+      <div class="about__text">
+        <p class="eyebrow">Как проходит</p>
+        <h2>Прогулка, а не лекция</h2>
+        <p>Мы начинаем в 10:00 у дома на улице Ленина, 11. Гид встречает группу, знакомится и ведёт по маршруту — без громкоговорителя и спешки.</p>
+        <p>Два часа пешком, с остановками на видах и вопросами. В группе не больше десяти человек, поэтому слышно каждого и можно спросить о том, что интересно именно вам.</p>
+        <p class="about__note">Маршруты проходят каждый день, без выходных и исключений.</p>
+      </div>
+      <div class="about__media">
+        <figure class="shot shot--tall">
+          <img src="Photo/file.jpg" alt="Группа идёт по променаду вдоль моря">
+          <figcaption>Променад в пасмурный день — тоже часть Светлогорска</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="Photo/svetlogorsk_35.jpg" alt="Набережная Светлогорска: отели, лестницы и пляж">
+          <figcaption>Набережная и спуски к морю</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section tours" id="tours">
+    <div class="wrap">
+      <div class="section__head">
+        <div>
+          <p class="eyebrow">Расписание</p>
+          <h2>Четыре маршрута, один ритм</h2>
+          <p class="section__lead">Все экскурсии начинаются в 10:00 и длятся два часа. Выберите маршрут — стоимость посчитается сразу.</p>
+        </div>
+      </div>
+
+      <div class="tours__layout">
+        <div class="tour-grid" id="tourGrid">
+
+          <article class="tour" data-id="sea">
+            <p class="tour__num">01</p>
+            <h3 class="tour__title">Море Светлогорска</h3>
+            <p class="tour__desc">Набережная, променад и балтийский ветер.</p>
+            <dl class="tour__meta">
+              <div><dt>Начало</dt><dd>10:00</dd></div>
+              <div><dt>Длительность</dt><dd>2 часа</dd></div>
+              <div><dt>Цена</dt><dd>350 ₽ / чел.</dd></div>
+            </dl>
+            <button class="btn btn--card" type="button" data-choose="sea">Записаться</button>
+          </article>
+
+          <article class="tour" data-id="lake">
+            <p class="tour__num">02</p>
+            <h3 class="tour__title">Озеро Тихое</h3>
+            <p class="tour__desc">Тихая вода, сосны и курортные дачи.</p>
+            <dl class="tour__meta">
+              <div><dt>Начало</dt><dd>10:00</dd></div>
+              <div><dt>Длительность</dt><dd>2 часа</dd></div>
+              <div><dt>Цена</dt><dd>350 ₽ / чел.</dd></div>
+            </dl>
+            <button class="btn btn--card" type="button" data-choose="lake">Записаться</button>
+          </article>
+
+          <article class="tour" data-id="streets">
+            <p class="tour__num">03</p>
+            <h3 class="tour__title">Улицы Светлогорска</h3>
+            <p class="tour__desc">Фахверк, виллы и истории старых кварталов.</p>
+            <dl class="tour__meta">
+              <div><dt>Начало</dt><dd>10:00</dd></div>
+              <div><dt>Длительность</dt><dd>2 часа</dd></div>
+              <div><dt>Цена</dt><dd>350 ₽ / чел.</dd></div>
+            </dl>
+            <button class="btn btn--card" type="button" data-choose="streets">Записаться</button>
+          </article>
+
+          <article class="tour" data-id="otradnoe">
+            <p class="tour__num">04</p>
+            <h3 class="tour__title">Отрадное и Волчий овраг</h3>
+            <p class="tour__desc">Лесная тропа к морю за городом.</p>
+            <dl class="tour__meta">
+              <div><dt>Начало</dt><dd>10:00</dd></div>
+              <div><dt>Длительность</dt><dd>2 часа</dd></div>
+              <div><dt>Цена</dt><dd>350 ₽ / чел.</dd></div>
+            </dl>
+            <button class="btn btn--card" type="button" data-choose="otradnoe">Записаться</button>
+          </article>
+
+        </div>
+
+        <aside class="panel" id="booking" aria-labelledby="bookingTitle">
+          <form class="form" id="bookingForm" novalidate>
+            <h2 class="panel__title" id="bookingTitle">Ваша заявка</h2>
+
+            <div class="panel__tour">
+              <span class="panel__label">Экскурсия</span>
+              <strong id="panelTour">Море Светлогорска</strong>
+            </div>
+
+            <p class="field__error" id="tourError" hidden>Выберите экскурсию</p>
+
+            <div class="field">
+              <label class="field__label" for="date">Дата</label>
+              <input class="input" type="date" id="date" name="date" required>
+              <p class="field__error" id="dateError" hidden></p>
+            </div>
+
+            <div class="field">
+              <span class="field__label" id="peopleLabel">Участники</span>
+              <div class="stepper" role="group" aria-labelledby="peopleLabel">
+                <button class="stepper__btn" type="button" id="minus" aria-label="Уменьшить число участников">−</button>
+                <output class="stepper__value" id="people" aria-live="polite">1</output>
+                <button class="stepper__btn" type="button" id="plus" aria-label="Увеличить число участников">+</button>
+              </div>
+              <p class="field__hint">Не более 10 человек в группе</p>
+            </div>
+
+            <div class="total">
+              <span class="total__label">Итого</span>
+              <span class="total__value" id="total">350 ₽</span>
+              <span class="total__calc" id="totalCalc">350 ₽ × 1 участник</span>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="name">Имя</label>
+              <input class="input" type="text" id="name" name="name" autocomplete="name" placeholder="Как к вам обращаться" required>
+              <p class="field__error" id="nameError" hidden></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="contact">Телефон или почта</label>
+              <input class="input" type="text" id="contact" name="contact" autocomplete="tel" placeholder="+7 900 000-00-00 или mail@example.ru" required>
+              <p class="field__error" id="contactError" hidden></p>
+            </div>
+
+            <button class="btn btn--primary btn--full" type="submit" id="submitBtn">Отправить заявку</button>
+            <p class="form__note">Отправляя заявку, вы соглашаетесь на обработку персональных данных. Заявка уходит на почту агентства.</p>
+
+            <p class="form__status" id="status" role="status" aria-live="polite"></p>
+            <p class="form__fallback" id="fallback" hidden></p>
+
+            <input type="text" name="_honey" id="honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="honeypot">
+          </form>
+
+          <div class="success" id="success" hidden>
+            <h2 class="panel__title">Заявка отправлена</h2>
+            <p class="success__lead" id="successLead">Мы получили заявку на почту агентства и ответим, чтобы подтвердить место в группе.</p>
+            <dl class="success__list" id="successList"></dl>
+            <button class="btn btn--ghost btn--full" type="button" id="again">Отправить ещё одну заявку</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="banner">
+    <img src="Photo/svetlogorsk_9.jpg" alt="Улочка Светлогорска с фахверковыми домами вечером">
+    <div class="banner__text">
+      <p>Светлогорск — это не список достопримечательностей, а два часа спокойной ходьбы с человеком, который здесь живёт.</p>
+    </div>
+  </section>
+
+  <section class="section details" id="details">
+    <div class="wrap">
+      <div class="section__head">
+        <div>
+          <p class="eyebrow">Детали</p>
+          <h2>Что нужно знать</h2>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <h3>Точка сбора</h3>
+          <p class="card__strong">ул. Ленина, 11</p>
+          <p>Здесь гид встречает группу и начинает маршрут.</p>
+        </article>
+        <article class="card">
+          <h3>Когда</h3>
+          <p class="card__strong">Каждый день, 10:00</p>
+          <p>Длительность — два часа. Выходных и исключений нет.</p>
+        </article>
+        <article class="card">
+          <h3>Отмена</h3>
+          <p class="card__strong">Условия уточняются</p>
+          <p>Если планы изменились, напишите нам — договоримся о переносе.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <div>
+      <p class="logo__name">Променад</p>
+      <p class="footer__sub">Экскурсии по Светлогорску · сбор на ул. Ленина, 11</p>
+      <p class="footer__sub"><a href="mailto:vlad1952@yandex.ru">vlad1952@yandex.ru</a></p>
+    </div>
+    <p class="footer__meta">2026</p>
+  </div>
+</footer>
+
+<div class="mobile-bar" id="mobileBar">
+  <div class="mobile-bar__info">
+    <span id="mobileTour">Море Светлогорска</span>
+    <strong id="mobileTotal">350 ₽</strong>
+  </div>
+  <a class="btn btn--primary" href="#booking">К заявке</a>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
