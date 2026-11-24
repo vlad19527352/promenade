@@ -4,6 +4,9 @@
   var PRICE = 350;
   var MAX_PEOPLE = 10;
 
+  /* Сколько ждём ответа FormSubmit, прежде чем сдаться и предложить почту */
+  var REQUEST_TIMEOUT = 15000;
+
   /* Куда уходят заявки. FormSubmit пересылает письмо на почту агентства,
      бэкенд не нужен — работает и на GitHub Pages. */
   var OWNER_EMAIL = 'vladimir19527352@gmail.com';
@@ -129,7 +132,9 @@
 
   function chooseTour(id) {
     if (!TOURS[id]) return;
-    state.tour = state.tour === id ? null : id;
+    /* повторный клик по выбранной карточке оставляет выбор как есть:
+       иначе пользователь случайно остаётся без экскурсии и суммы */
+    state.tour = id;
     clearError(el.tourError);
     render();
   }
@@ -163,8 +168,24 @@
   /* ---------- проверки ---------- */
 
   function isPhone(value) {
+    if (!/^[\d\s()+\-]+$/.test(value)) return false;
+
     var digits = value.replace(/\D/g, '');
-    return digits.length >= 10 && digits.length <= 15 && /^[\d\s()+\-]+$/.test(value);
+    if (digits.length < 10 || digits.length > 15) return false;
+
+    /* плюс допустим только один и только в начале номера */
+    if ((value.match(/\+/g) || []).length > 1) return false;
+    if (value.indexOf('+') > 0) return false;
+
+    /* скобки должны быть парными и не больше одной пары */
+    var opened = (value.match(/\(/g) || []).length;
+    var closed = (value.match(/\)/g) || []).length;
+    if (opened !== closed || opened > 1) return false;
+
+    /* не больше двух разделителей подряд */
+    if (/[\s\-]{3,}/.test(value)) return false;
+
+    return true;
   }
 
   function isEmail(value) {
@@ -354,13 +375,21 @@
 
     setSending(true);
 
+    /* Без таймаута «зависшее» соединение оставляет кнопку заблокированной
+       навсегда, и посетитель теряет заявку. */
+    var controller = new AbortController();
+    var timer = setTimeout(function () {
+      controller.abort();
+    }, REQUEST_TIMEOUT);
+
     fetch(ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: controller.signal
     })
       .then(function (response) {
         /* FormSubmit ограничивает частоту отправок с одного адреса */
@@ -384,13 +413,18 @@
           }
           throw new Error('rejected');
         }
+        clearTimeout(timer);
         setSending(false);
         showSuccess(rows);
       })
       .catch(function (err) {
+        clearTimeout(timer);
         setSending(false);
         showMailFallback(rows);
-        if (err && err.message === 'file-protocol') {
+        if (err && err.name === 'AbortError') {
+          el.status.textContent = 'Сервер не ответил за ' + (REQUEST_TIMEOUT / 1000) + ' секунд. ' +
+            'Проверьте связь и попробуйте снова или отправьте заявку по ссылке ниже.';
+        } else if (err && err.message === 'file-protocol') {
           el.status.textContent = 'Форма работает только при открытии через веб-сервер. ' +
             'Запустите локальный сервер (например, npx serve .) или используйте опубликованную версию.';
         } else if (err && err.message === 'activation') {
