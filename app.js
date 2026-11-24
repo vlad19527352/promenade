@@ -1,9 +1,6 @@
 (function () {
   'use strict';
 
-  var PRICE = 350;
-  var MAX_PEOPLE = 10;
-
   /* Сколько ждём ответа FormSubmit, прежде чем сдаться и предложить почту */
   var REQUEST_TIMEOUT = 15000;
 
@@ -12,13 +9,6 @@
   var OWNER_EMAIL = 'vladimir19527352@gmail.com';
   var ENDPOINT = 'https://formsubmit.co/ajax/' + OWNER_EMAIL;
   var SUBJECT = 'Заявка на экскурсию по Светлогорску';
-
-  var TOURS = {
-    sea: 'Море Светлогорска',
-    lake: 'Озеро Тихое',
-    streets: 'Улицы Светлогорска',
-    otradnoe: 'Отрадное и Волчий овраг'
-  };
 
   var state = {
     tour: 'sea',
@@ -49,10 +39,28 @@
     success: document.getElementById('success'),
     successList: document.getElementById('successList'),
     again: document.getElementById('again'),
-    mobileBar: document.getElementById('mobileBar'),
     mobileTour: document.getElementById('mobileTour'),
-    mobileTotal: document.getElementById('mobileTotal')
+    mobileTotal: document.getElementById('mobileTotal'),
+    hiddenTour: document.getElementById('hiddenTour'),
+    hiddenPeople: document.getElementById('hiddenPeople')
   };
+
+  /* Цена, лимит участников и названия маршрутов живут в разметке:
+     так они не разъедутся между HTML и скриптом. */
+  var PRICE = Number(el.grid.getAttribute('data-price')) || 350;
+  var MAX_PEOPLE = Number(el.grid.getAttribute('data-max')) || 10;
+
+  var TOURS = {};
+  el.cards.forEach(function (card) {
+    var id = card.getAttribute('data-id');
+    var title = card.querySelector('.tour__title');
+    if (id && title) TOURS[id] = title.textContent.trim();
+  });
+
+  if (!TOURS[state.tour]) {
+    var firstId = el.cards.length ? el.cards[0].getAttribute('data-id') : null;
+    state.tour = firstId || null;
+  }
 
   /* ---------- утилиты ---------- */
 
@@ -116,6 +124,13 @@
 
     el.minus.disabled = state.people <= 1;
     el.plus.disabled = state.people >= MAX_PEOPLE;
+
+    /* скрытые поля — на случай отправки формы без скрипта */
+    if (el.hiddenTour) el.hiddenTour.value = hasTour ? TOURS[state.tour] : '';
+    if (el.hiddenPeople) {
+      el.hiddenPeople.value = state.people + ' ' +
+        plural(state.people, 'человек', 'человека', 'человек');
+    }
 
     el.cards.forEach(function (card) {
       var active = card.getAttribute('data-id') === state.tour;
@@ -341,11 +356,11 @@
       return;
     }
 
-    /* ловушка для ботов: человек это поле не видит */
-    if (el.honey.value) {
-      showSuccess(collectRows());
-      return;
-    }
+    /* ловушка для ботов: человек это поле не видит.
+       Раньше при заполненном поле показывался ложный успех, и настоящая
+       заявка (если её подставил автозаполнитель) терялась. Теперь заявка
+       уходит в любом случае, а факт срабатывания ловушки виден в письме. */
+    var honeyFilled = !!el.honey.value;
 
     var rows = collectRows();
 
@@ -361,6 +376,7 @@
 
     /* Ключи — по-русски: FormSubmit выводит их как заголовки строк
        в таблице письма. Проверено: письмо приходит с данными. */
+    var contactValue = rows[5][1];
     var payload = {
       _subject: SUBJECT,
       _template: 'table',
@@ -372,6 +388,17 @@
       'Имя': rows[4][1],
       'Контакт': rows[5][1]
     };
+
+    /* Если клиент оставил почту — на письмо можно ответить одним нажатием */
+    if (contactValue.indexOf('@') !== -1) {
+      payload._replyto = contactValue;
+    }
+
+    /* Метка ловушки для ботов: письмо придёт, но в нём будет видно,
+       что поле заполнил не человек. */
+    if (honeyFilled) {
+      payload['Проверка'] = 'сработала ловушка для ботов';
+    }
 
     setSending(true);
 
@@ -398,17 +425,20 @@
         return response.json();
       })
       .then(function (data) {
-        if (data && String(data.success) === 'false') {
+        /* Ответ без поля success считаем неудачей: иначе форма покажет
+           «Заявка отправлена», хотя письмо не ушло. */
+        if (!data || String(data.success) !== 'true') {
+          var message = (data && data.message) || '';
           /* FormSubmit отказывается принимать заявки со страниц без веб-сервера */
-          if (data.message && data.message.indexOf('web server') !== -1) {
+          if (message.indexOf('web server') !== -1) {
             throw new Error('file-protocol');
           }
           /* Форма ещё не активирована для текущего домена */
-          if (data.message && data.message.indexOf('Activation') !== -1) {
+          if (message.indexOf('Activation') !== -1) {
             throw new Error('activation');
           }
           /* Слишком много заявок подряд с одного адреса */
-          if (data.message && data.message.indexOf('Rate limit') !== -1) {
+          if (message.indexOf('Rate limit') !== -1) {
             throw new Error('rate-limit');
           }
           throw new Error('rejected');
@@ -445,7 +475,8 @@
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   el.again.addEventListener('click', function () {

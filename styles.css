@@ -78,6 +78,7 @@ a{color:inherit}
 .header{
   position:sticky;top:0;z-index:40;
   background:rgba(247,242,232,.92);
+  -webkit-backdrop-filter:blur(10px);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
 }
@@ -213,6 +214,10 @@ a{color:inherit}
   position:sticky;top:96px;
   background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
   padding:26px 24px;box-shadow:var(--shadow);
+  /* Панель выше экрана не должна «запирать» кнопку отправки:
+     при нехватке места прокручиваем её содержимое. */
+  max-height:calc(100vh - 120px);
+  overflow-y:auto;
 }
 .panel__title{font-size:26px;margin-bottom:18px}
 
@@ -337,7 +342,7 @@ a{color:inherit}
 /* ============ Планшет ============ */
 @media (max-width:1024px){
   .tours__layout{grid-template-columns:1fr}
-  .panel{position:static}
+  .panel{position:static;max-height:none;overflow-y:visible}
   .about__grid{grid-template-columns:1fr;gap:36px}
   .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
 }

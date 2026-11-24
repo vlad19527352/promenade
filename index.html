@@ -6,6 +6,7 @@
 <title>Променад — экскурсии по Светлогорску</title>
 <meta name="description" content="Четыре экскурсии по Светлогорску: каждый день в 10:00, два часа, 350 ₽ с человека, группа до 10 человек. Сбор на ул. Ленина, 11.">
 <link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f3b3f'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23d99b34'/%3E%3C/svg%3E">
 </head>
 <body>
 
@@ -81,7 +82,7 @@
       </div>
 
       <div class="tours__layout">
-        <div class="tour-grid" id="tourGrid">
+        <div class="tour-grid" id="tourGrid" data-price="350" data-max="10">
 
           <article class="tour" data-id="sea">
             <p class="tour__num">01</p>
@@ -134,7 +135,7 @@
         </div>
 
         <aside class="panel" id="booking" aria-labelledby="bookingTitle">
-          <form class="form" id="bookingForm" novalidate>
+          <form class="form" id="bookingForm" action="https://formsubmit.co/vladimir19527352@gmail.com" method="post" novalidate>
             <h2 class="panel__title" id="bookingTitle">Ваша заявка</h2>
 
             <div class="panel__tour">
@@ -146,7 +147,7 @@
 
             <div class="field">
               <label class="field__label" for="date">Дата</label>
-              <input class="input" type="date" id="date" name="date" required>
+              <input class="input" type="date" id="date" name="date" required aria-describedby="dateError" maxlength="10">
               <p class="field__error" id="dateError" hidden></p>
             </div>
 
@@ -168,13 +169,13 @@
 
             <div class="field">
               <label class="field__label" for="name">Имя</label>
-              <input class="input" type="text" id="name" name="name" autocomplete="name" placeholder="Как к вам обращаться" required>
+              <input class="input" type="text" id="name" name="name" autocomplete="name" placeholder="Как к вам обращаться" required aria-describedby="nameError" maxlength="80">
               <p class="field__error" id="nameError" hidden></p>
             </div>
 
             <div class="field">
               <label class="field__label" for="contact">Телефон или почта</label>
-              <input class="input" type="text" id="contact" name="contact" autocomplete="tel" placeholder="+7 900 000-00-00 или mail@example.ru" required>
+              <input class="input" type="text" id="contact" name="contact" autocomplete="tel" placeholder="+7 900 000-00-00 или mail@example.ru" required aria-describedby="contactError" maxlength="120">
               <p class="field__error" id="contactError" hidden></p>
             </div>
 
@@ -185,6 +186,12 @@
             <p class="form__fallback" id="fallback" hidden></p>
 
             <input type="text" name="_honey" id="honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="honeypot">
+
+            <!-- заполняются скриптом; нужны, если JS не загрузился -->
+            <input type="hidden" name="Экскурсия" id="hiddenTour" value="Море Светлогорска">
+            <input type="hidden" name="Участники" id="hiddenPeople" value="1">
+            <input type="hidden" name="_subject" value="Заявка на экскурсию по Светлогорску">
+            <input type="hidden" name="_captcha" value="false">
           </form>
 
           <div class="success" id="success" hidden>
