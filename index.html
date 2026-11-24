@@ -135,7 +135,7 @@
         </div>
 
         <aside class="panel" id="booking" aria-labelledby="bookingTitle">
-          <form class="form" id="bookingForm" action="https://formsubmit.co/vladimir19527352@gmail.com" method="post" novalidate>
+          <form class="form" id="bookingForm" action="https://api.web3forms.com/submit" method="post" novalidate>
             <h2 class="panel__title" id="bookingTitle">Ваша заявка</h2>
 
             <div class="panel__tour">
@@ -190,8 +190,10 @@
             <!-- заполняются скриптом; нужны, если JS не загрузился -->
             <input type="hidden" name="Экскурсия" id="hiddenTour" value="Море Светлогорска">
             <input type="hidden" name="Участники" id="hiddenPeople" value="1">
-            <input type="hidden" name="_subject" value="Заявка на экскурсию по Светлогорску">
-            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="access_key" value="e83c3917-26a9-41bd-a447-801edbc8cf51">
+            <input type="hidden" name="subject" value="Заявка на экскурсию по Светлогорску">
+            <input type="hidden" name="from_name" value="Променад — заявка с сайта">
+            <input type="hidden" name="redirect" value="https://vlad19527352.github.io/promenade/?sent=1">
           </form>
 
           <div class="success" id="success" hidden>

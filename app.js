@@ -1,13 +1,15 @@
 (function () {
   'use strict';
 
-  /* Сколько ждём ответа FormSubmit, прежде чем сдаться и предложить почту */
+  /* Сколько ждём ответа сервиса, прежде чем сдаться и предложить почту */
   var REQUEST_TIMEOUT = 15000;
 
-  /* Куда уходят заявки. FormSubmit пересылает письмо на почту агентства,
-     бэкенд не нужен — работает и на GitHub Pages. */
+  /* Куда уходят заявки. Web3Forms пересылает письмо на почту агентства,
+     бэкенд не нужен — работает и на GitHub Pages, и на localhost.
+     Ключ публичный: он и так виден в исходниках страницы. */
   var OWNER_EMAIL = 'vladimir19527352@gmail.com';
-  var ENDPOINT = 'https://formsubmit.co/ajax/' + OWNER_EMAIL;
+  var ACCESS_KEY = 'e83c3917-26a9-41bd-a447-801edbc8cf51';
+  var ENDPOINT = 'https://api.web3forms.com/submit';
   var SUBJECT = 'Заявка на экскурсию по Светлогорску';
 
   var state = {
@@ -364,8 +366,7 @@
 
     var rows = collectRows();
 
-    /* FormSubmit отклоняет запросы со страниц, открытых как файл (file://).
-       Показываем понятное сообщение вместо бесполезной попытки отправки. */
+    /* Web3Forms отклоняет запросы со страниц, открытых как файл (file://). */
     if (window.location.protocol === 'file:') {
       showMailFallback(rows);
       el.status.textContent = 'Форма не отправляется с локального файла. ' +
@@ -374,13 +375,11 @@
       return;
     }
 
-    /* Ключи — по-русски: FormSubmit выводит их как заголовки строк
-       в таблице письма. Проверено: письмо приходит с данными. */
-    var contactValue = rows[5][1];
+    /* Поля — по-русски: Web3Forms выводит их как строки письма. */
     var payload = {
-      _subject: SUBJECT,
-      _template: 'table',
-      _captcha: 'false',
+      access_key: ACCESS_KEY,
+      subject: SUBJECT,
+      from_name: 'Променад — заявка с сайта',
       'Экскурсия': rows[0][1],
       'Дата': rows[1][1],
       'Участники': rows[2][1],
@@ -388,11 +387,6 @@
       'Имя': rows[4][1],
       'Контакт': rows[5][1]
     };
-
-    /* Если клиент оставил почту — на письмо можно ответить одним нажатием */
-    if (contactValue.indexOf('@') !== -1) {
-      payload._replyto = contactValue;
-    }
 
     /* Метка ловушки для ботов: письмо придёт, но в нём будет видно,
        что поле заполнил не человек. */
@@ -419,27 +413,21 @@
       signal: controller.signal
     })
       .then(function (response) {
-        /* FormSubmit ограничивает частоту отправок с одного адреса */
+        /* Web3Forms ограничивает частоту отправок с одного адреса */
         if (response.status === 429) throw new Error('rate-limit');
         if (!response.ok) throw new Error('HTTP ' + response.status);
         return response.json();
       })
       .then(function (data) {
-        /* Ответ без поля success считаем неудачей: иначе форма покажет
-           «Заявка отправлена», хотя письмо не ушло. */
-        if (!data || String(data.success) !== 'true') {
+        /* Web3Forms возвращает success булевым. Любой другой ответ считаем
+           неудачей, иначе форма покажет «Заявка отправлена» без письма. */
+        if (!data || data.success !== true) {
           var message = (data && data.message) || '';
-          /* FormSubmit отказывается принимать заявки со страниц без веб-сервера */
-          if (message.indexOf('web server') !== -1) {
-            throw new Error('file-protocol');
-          }
-          /* Форма ещё не активирована для текущего домена */
-          if (message.indexOf('Activation') !== -1) {
-            throw new Error('activation');
-          }
-          /* Слишком много заявок подряд с одного адреса */
           if (message.indexOf('Rate limit') !== -1) {
             throw new Error('rate-limit');
+          }
+          if (message.indexOf('Access Key') !== -1) {
+            throw new Error('bad-key');
           }
           throw new Error('rejected');
         }
@@ -457,13 +445,12 @@
         } else if (err && err.message === 'file-protocol') {
           el.status.textContent = 'Форма работает только при открытии через веб-сервер. ' +
             'Запустите локальный сервер (например, npx serve .) или используйте опубликованную версию.';
-        } else if (err && err.message === 'activation') {
-          el.status.textContent = 'Форма не активирована для адреса ' +
-            window.location.host + '. FormSubmit отправил на почту агентства письмо ' +
-            'со ссылкой активации — откройте его и нажмите «Activate Form».';
         } else if (err && err.message === 'rate-limit') {
           el.status.textContent = 'Слишком много заявок подряд. Подождите час и попробуйте снова ' +
             'или отправьте заявку по ссылке ниже.';
+        } else if (err && err.message === 'bad-key') {
+          el.status.textContent = 'Сервис отклонил ключ доступа. Напишите нам напрямую — ' +
+            'ссылка ниже уже содержит текст заявки.';
         } else {
           el.status.textContent = 'Отправка не удалась. Проверьте связь и попробуйте ещё раз.';
         }
