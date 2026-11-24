@@ -179,7 +179,19 @@ a{color:inherit}
   transition:border-color .2s,box-shadow .2s;
 }
 .tour:hover{box-shadow:var(--shadow)}
-.tour.is-active{border-color:var(--pine);box-shadow:0 0 0 2px rgba(15,59,63,.16)}
+.tour.is-active{
+  background:var(--pine);border-color:var(--pine);box-shadow:var(--shadow);
+}
+.tour.is-active .tour__title{color:#fff}
+.tour.is-active .tour__desc{color:rgba(255,255,255,.82)}
+.tour.is-active .tour__num{color:var(--amber)}
+.tour.is-active .tour__meta{border-top-color:rgba(255,255,255,.24)}
+.tour.is-active .tour__meta dt{color:rgba(255,255,255,.72)}
+.tour.is-active .tour__meta dd{color:#fff}
+.tour.is-active .btn--card{
+  background:var(--amber);color:#241703;border-color:var(--amber);
+}
+.tour.is-active .btn--card:hover{background:#fff;color:var(--pine);border-color:#fff}
 
 .tour__num{
   font-size:12px;letter-spacing:.18em;color:var(--amber-deep);

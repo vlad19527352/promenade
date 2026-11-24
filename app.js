@@ -328,6 +328,18 @@
 
     var rows = collectRows();
 
+    /* FormSubmit отклоняет запросы со страниц, открытых как файл (file://).
+       Показываем понятное сообщение вместо бесполезной попытки отправки. */
+    if (window.location.protocol === 'file:') {
+      showMailFallback(rows);
+      el.status.textContent = 'Форма не отправляется с локального файла. ' +
+        'Откройте сайт через локальный сервер (например, npx serve .) ' +
+        'или опубликованную версию — тогда заявка уйдёт автоматически.';
+      return;
+    }
+
+    /* Ключи — по-русски: FormSubmit выводит их как заголовки строк
+       в таблице письма. Проверено: письмо приходит с данными. */
     var payload = {
       _subject: SUBJECT,
       _template: 'table',
@@ -355,14 +367,25 @@
         return response.json();
       })
       .then(function (data) {
-        if (data && String(data.success) === 'false') throw new Error('rejected');
+        if (data && String(data.success) === 'false') {
+          /* FormSubmit отказывается принимать заявки со страниц без веб-сервера */
+          if (data.message && data.message.indexOf('web server') !== -1) {
+            throw new Error('file-protocol');
+          }
+          throw new Error('rejected');
+        }
         setSending(false);
         showSuccess(rows);
       })
-      .catch(function () {
+      .catch(function (err) {
         setSending(false);
         showMailFallback(rows);
-        el.status.textContent = 'Отправка не удалась. Проверьте связь и попробуйте ещё раз.';
+        if (err && err.message === 'file-protocol') {
+          el.status.textContent = 'Форма работает только при открытии через веб-сервер. ' +
+            'Запустите локальный сервер (например, npx serve .) или используйте опубликованную версию.';
+        } else {
+          el.status.textContent = 'Отправка не удалась. Проверьте связь и попробуйте ещё раз.';
+        }
       });
   });
 
