@@ -363,6 +363,8 @@
       body: JSON.stringify(payload)
     })
       .then(function (response) {
+        /* FormSubmit ограничивает частоту отправок с одного адреса */
+        if (response.status === 429) throw new Error('rate-limit');
         if (!response.ok) throw new Error('HTTP ' + response.status);
         return response.json();
       })
@@ -371,6 +373,14 @@
           /* FormSubmit отказывается принимать заявки со страниц без веб-сервера */
           if (data.message && data.message.indexOf('web server') !== -1) {
             throw new Error('file-protocol');
+          }
+          /* Форма ещё не активирована для текущего домена */
+          if (data.message && data.message.indexOf('Activation') !== -1) {
+            throw new Error('activation');
+          }
+          /* Слишком много заявок подряд с одного адреса */
+          if (data.message && data.message.indexOf('Rate limit') !== -1) {
+            throw new Error('rate-limit');
           }
           throw new Error('rejected');
         }
@@ -383,6 +393,13 @@
         if (err && err.message === 'file-protocol') {
           el.status.textContent = 'Форма работает только при открытии через веб-сервер. ' +
             'Запустите локальный сервер (например, npx serve .) или используйте опубликованную версию.';
+        } else if (err && err.message === 'activation') {
+          el.status.textContent = 'Форма не активирована для адреса ' +
+            window.location.host + '. FormSubmit отправил на почту агентства письмо ' +
+            'со ссылкой активации — откройте его и нажмите «Activate Form».';
+        } else if (err && err.message === 'rate-limit') {
+          el.status.textContent = 'Слишком много заявок подряд. Подождите час и попробуйте снова ' +
+            'или отправьте заявку по ссылке ниже.';
         } else {
           el.status.textContent = 'Отправка не удалась. Проверьте связь и попробуйте ещё раз.';
         }
